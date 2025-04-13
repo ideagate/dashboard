@@ -66,7 +66,14 @@ const ReactFlowBody: FC = () => {
         }
 
         setNodes((nds) => nds.concat(newNode))
-        setEdges((eds) => eds.concat({ id, source: connectionState.fromNode?.id || '', target: id, animated: true }))
+        setEdges((eds) =>
+          eds.concat({
+            id,
+            source: connectionState.fromNode?.id || '',
+            target: id,
+            animated: true,
+          })
+        )
       }
     },
     [screenToFlowPosition, setEdges, setNodes]

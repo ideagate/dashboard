@@ -59,7 +59,10 @@ const SearchSection = () => {
           </InputAdornment>
         }
         aria-describedby="search-helper-text"
-        inputProps={{ 'aria-label': 'weight', sx: { bgcolor: 'transparent', pl: 0.5 } }}
+        inputProps={{
+          'aria-label': 'weight',
+          sx: { bgcolor: 'transparent', pl: 0.5 },
+        }}
         sx={{ width: { md: 250, lg: 434 }, ml: 2, px: 2 }}
       />
     </Box>

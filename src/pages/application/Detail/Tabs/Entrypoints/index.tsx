@@ -1,24 +1,23 @@
-import AddIcon from "@mui/icons-material/Add";
-import { Box, IconButton, TextField, useTheme } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { FC } from "react";
-import { useParams } from "react-router-dom";
+import AddIcon from '@mui/icons-material/Add'
+import { Box, IconButton, TextField, useTheme } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
+import { FC } from 'react'
+import { useParams } from 'react-router-dom'
 
-import { getEntrypoints } from "#/api/grpc/endpoint";
+import { getEntrypoints } from '#/api/grpc/endpoint'
 
-import EntrypointItem from "./components/EntrypointItem";
+import EntrypointItem from './components/EntrypointItem'
 
 const EntrypointPage: FC = () => {
-  const { project_id, app_id } = useParams();
+  const { project_id, app_id } = useParams()
 
-  const theme = useTheme();
+  const theme = useTheme()
 
   const rqEntrypoints = useQuery({
-    queryKey: ["entrypoints", project_id, app_id],
-    queryFn: () =>
-      getEntrypoints({ projectId: project_id, applicationId: app_id }),
-  });
-  const entrypoints = rqEntrypoints.data?.endpoints || [];
+    queryKey: ['entrypoints', project_id, app_id],
+    queryFn: () => getEntrypoints({ projectId: project_id, applicationId: app_id }),
+  })
+  const entrypoints = rqEntrypoints.data?.endpoints || []
 
   return (
     <div>
@@ -27,8 +26,8 @@ const EntrypointPage: FC = () => {
         <IconButton
           sx={{
             backgroundColor: theme.palette.primary.main,
-            color: "white",
-            ":hover": { color: theme.palette.primary.main },
+            color: 'white',
+            ':hover': { color: theme.palette.primary.main },
           }}
         >
           <AddIcon />
@@ -39,7 +38,7 @@ const EntrypointPage: FC = () => {
         <EntrypointItem key={entrypoint.id} entrypoint={entrypoint} />
       ))}
     </div>
-  );
-};
+  )
+}
 
-export default EntrypointPage;
+export default EntrypointPage

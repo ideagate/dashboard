@@ -1,13 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom'
 
-import ApplicationDetailPage from '#/pages/application/Detail'
-import ApplicationEntrypointDetailPage from '#/pages/application/EntrypointDetail'
-import ApplicationListPage from '#/pages/application/List'
-
-import MainLayout from './layout/MainLayout'
-import DataSourcePage from './pages/datasource'
-import LoginPage from './pages/login'
-import Root from './pages/root'
+import {
+  ApplicationDetailPage,
+  ApplicationEntrypointDetailPage,
+  ApplicationListPage,
+  DataSourcePage,
+  LoginPage,
+  MainLayout,
+  Root,
+} from './pages'
 
 export const router = createBrowserRouter([
   {

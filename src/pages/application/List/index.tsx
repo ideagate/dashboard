@@ -52,7 +52,14 @@ const ApplicationListPage: FC = () => {
 
       <Card sx={{ minHeight: '100%' }}>
         <CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              mb: 3,
+            }}
+          >
             <TextField
               size="small"
               type="search"
@@ -67,7 +74,12 @@ const ApplicationListPage: FC = () => {
                 },
               }}
             />
-            <IconButton sx={{ backgroundColor: theme.palette.secondary.main, color: 'white' }}>
+            <IconButton
+              sx={{
+                backgroundColor: theme.palette.secondary.main,
+                color: 'white',
+              }}
+            >
               <AddIcon />
             </IconButton>
           </Box>

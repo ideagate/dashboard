@@ -46,7 +46,10 @@ type Tdata = {
   outputs?: Array<Tvar>
 }
 
-const Variables: FC<{ form: UseFormReturn<Tdata>; name: 'vars' | 'outputs' }> = ({ form, name }) => {
+const Variables: FC<{
+  form: UseFormReturn<Tdata>
+  name: 'vars' | 'outputs'
+}> = ({ form, name }) => {
   const fieldArray = useFieldArray({
     control: form.control,
     name: name,

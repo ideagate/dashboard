@@ -1,6 +1,6 @@
-import ApiIcon from "@mui/icons-material/Api";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import SettingsIcon from "@mui/icons-material/Settings";
+import ApiIcon from '@mui/icons-material/Api'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
   Breadcrumbs,
@@ -13,37 +13,37 @@ import {
   Tabs,
   TabsProps,
   Typography,
-} from "@mui/material";
-import { FC } from "react";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+} from '@mui/material'
+import { FC } from 'react'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 
-import { ApplicationProvider, useApplication } from "./hooks/application";
-import { Entrypoints, Setting } from "./Tabs";
+import { ApplicationProvider, useApplication } from './hooks/application'
+import { Entrypoints, Setting } from './Tabs'
 
 const ApplicationPage: FC = () => {
-  const { project_id } = useParams();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const tab = searchParams.get("tab") || "entrypoint";
+  const { project_id } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tab = searchParams.get('tab') || 'entrypoint'
 
-  const { app, isLoading } = useApplication();
+  const { app, isLoading } = useApplication()
 
-  const onChangeTab: TabsProps["onChange"] = (_, tab) => {
-    setSearchParams({ tab }, { replace: true });
-  };
+  const onChangeTab: TabsProps['onChange'] = (_, tab) => {
+    setSearchParams({ tab }, { replace: true })
+  }
 
   const Body = () => {
     switch (tab) {
-      case "setting":
-        return <Setting />;
+      case 'setting':
+        return <Setting />
       default:
-        return <Entrypoints />;
+        return <Entrypoints />
     }
-  };
+  }
 
-  const linkApplications = `/${project_id}/application`;
+  const linkApplications = `/${project_id}/application`
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   return (
@@ -52,12 +52,12 @@ const ApplicationPage: FC = () => {
         sx={{
           p: 1.5,
           mb: 2,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Link to={linkApplications}>
             <IconButton size="small">
               <ArrowBackIcon />
@@ -78,18 +78,8 @@ const ApplicationPage: FC = () => {
       <Card>
         <CardContent>
           <Tabs value={tab} onChange={onChangeTab} sx={{ minHeight: 0 }}>
-            <TabCustom
-              value={"entrypoint"}
-              icon={<ApiIcon />}
-              iconPosition="start"
-              label="Entrypoints"
-            />
-            <TabCustom
-              value={"setting"}
-              icon={<SettingsIcon />}
-              iconPosition="start"
-              label="Settings"
-            />
+            <TabCustom value={'entrypoint'} icon={<ApiIcon />} iconPosition="start" label="Entrypoints" />
+            <TabCustom value={'setting'} icon={<SettingsIcon />} iconPosition="start" label="Settings" />
           </Tabs>
           <Divider sx={{ marginBottom: 2 }} />
 
@@ -97,17 +87,15 @@ const ApplicationPage: FC = () => {
         </CardContent>
       </Card>
     </>
-  );
-};
+  )
+}
 
-const TabCustom = (props: TabProps) => (
-  <Tab {...props} sx={{ ...props.sx, minHeight: 0 }} />
-);
+const TabCustom = (props: TabProps) => <Tab {...props} sx={{ ...props.sx, minHeight: 0 }} />
 
 export default function Page() {
   return (
     <ApplicationProvider>
       <ApplicationPage />
     </ApplicationProvider>
-  );
+  )
 }
