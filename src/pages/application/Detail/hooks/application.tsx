@@ -1,4 +1,4 @@
-import { Application } from '@bayu-aditya/ideagate-model-js/core/application/application'
+import { Application } from '@ideagate/model/core/application/application'
 import { useQuery } from '@tanstack/react-query'
 import React, { createContext, ReactNode, useContext } from 'react'
 import { useParams } from 'react-router-dom'

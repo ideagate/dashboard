@@ -1,4 +1,4 @@
-import { GetListApplicationRequest } from '@bayu-aditya/ideagate-model-js/dashboard/application'
+import { GetListApplicationRequest } from '@ideagate/model/dashboard/application'
 
 import { dashboardService } from './init'
 

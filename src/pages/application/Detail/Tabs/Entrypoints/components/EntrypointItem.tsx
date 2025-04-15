@@ -1,4 +1,4 @@
-import { Endpoint } from '@bayu-aditya/ideagate-model-js/core/endpoint/endpoint'
+import { Endpoint } from '@ideagate/model/core/endpoint/endpoint'
 import { Box, Chip, Typography } from '@mui/material'
 import { FC } from 'react'
 import { Link, useParams } from 'react-router-dom'

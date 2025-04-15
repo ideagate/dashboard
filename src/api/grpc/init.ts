@@ -1,4 +1,4 @@
-import { DashboardServiceClient } from '@bayu-aditya/ideagate-model-js/dashboard/service.client'
+import { DashboardServiceClient } from '@ideagate/model/dashboard/service.client'
 import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport'
 
 const transport = new GrpcWebFetchTransport({

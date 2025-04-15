@@ -18,12 +18,12 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@bayu-aditya/ideagate-model-js": "https://gitpkg.vercel.app/ideagate/model/gen-js?main",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fontsource/inter": "^5.1.1",
     "@fontsource/poppins": "^5.1.1",
     "@fontsource/roboto": "^5.1.1",
+    "@ideagate/model": "0.0.5",
     "@mui/icons-material": "^6.3.0",
     "@mui/material": "^6.1.5",
     "@protobuf-ts/grpcweb-transport": "^2.9.4",
