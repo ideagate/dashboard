@@ -1,3 +1,4 @@
+import { Endpoint } from '@ideagate/model/core/endpoint/endpoint'
 import { CreateEndpointRequest, GetListEndpointRequest } from '@ideagate/model/dashboard/endpoint'
 
 import { dashboardService } from './init'
@@ -7,7 +8,11 @@ export async function getEntrypoints(req: Partial<GetListEndpointRequest>) {
   return resp.response
 }
 
-export async function createEndpoint(req: Partial<CreateEndpointRequest>) {
-  const resp = await dashboardService.createEndpoint(CreateEndpointRequest.create(req))
+export async function createEntrypoint(entrypoint: Partial<Endpoint>) {
+  const req = CreateEndpointRequest.create({
+    endpoint: entrypoint,
+  })
+
+  const resp = await dashboardService.createEndpoint(req)
   return resp.response
 }

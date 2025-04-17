@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
-import { getEntrypoints } from '#/api/grpc/endpoint'
+import { getEntrypoints } from '#/api/grpc/entrypoint'
 
 import CreateEntrypoint from './components/CreateEntrypoint'
 import EntrypointItem from './components/EntrypointItem'

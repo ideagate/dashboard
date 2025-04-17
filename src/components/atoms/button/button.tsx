@@ -1,13 +1,19 @@
-import { Button as ButtonMui } from '@mui/material'
+import { Button as ButtonMui, ButtonProps as ButttonPropsMui } from '@mui/material'
 import { FC, ReactNode } from 'react'
 
-interface ButtonProps {
+interface ButtonProps extends ButttonPropsMui {
   children?: ReactNode
-  variant?: 'text' | 'contained' | 'outlined'
+  isLoading?: boolean
 }
 
 const Button: FC<ButtonProps> = (props) => {
-  return <ButtonMui variant={props.variant}>{props.children}</ButtonMui>
+  const { variant, children, ...rest } = props
+
+  return (
+    <ButtonMui {...rest} variant={variant}>
+      {children}
+    </ButtonMui>
+  )
 }
 
 export default Button
