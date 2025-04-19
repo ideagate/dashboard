@@ -1,5 +1,21 @@
-import { FC, InputHTMLAttributes } from 'react'
+import { TextField as TextFieldMui, TextFieldProps as TextFieldPropsMui } from '@mui/material'
+import { FC } from 'react'
 
-export const TextField: FC<InputHTMLAttributes<HTMLInputElement>> = (props) => {
-  return <input className="border-solid border-[1px] border-slate-400 rounded-[4px] px-3" {...props} />
+import { BaseInputProps } from './props'
+
+type TextFieldPropsFiltered = Omit<TextFieldPropsMui, 'onChange' | 'error'>
+type TextFieldProps = TextFieldPropsFiltered & BaseInputProps
+
+export const TextField: FC<TextFieldProps> = (props) => {
+  const { error, onChange, ...rest } = props
+
+  return (
+    <TextFieldMui
+      size="small"
+      onChange={(e) => onChange?.(e.target.value)}
+      error={error != null}
+      helperText={error}
+      {...rest}
+    />
+  )
 }

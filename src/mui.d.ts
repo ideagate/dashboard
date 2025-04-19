@@ -1,6 +1,8 @@
 import '@mui/material/styles'
 import '@mui/material/styles/createTypography'
 
+import { ThemeOptionsVars } from './themes/types.ts'
+
 declare module '@mui/material/styles' {
   interface Theme {
     opts: ThemeOptionsVars
