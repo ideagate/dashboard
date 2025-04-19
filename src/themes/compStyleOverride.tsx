@@ -29,7 +29,7 @@ export default function componentStyleOverrides(vars: ThemeOptionsVars): Theme['
     MuiCardHeader: {
       styleOverrides: {
         root: {
-          color: vars.colors?.textDark,
+          color: vars.colors?.darkTextTitle,
           padding: '24px',
         },
         title: {
@@ -109,7 +109,7 @@ export default function componentStyleOverrides(vars: ThemeOptionsVars): Theme['
           background: bgColor,
           borderRadius: vars.borderRadius,
           '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: vars.colors?.grey400,
+            borderColor: vars.colors?.grey300,
           },
           '&:hover $notchedOutline': {
             borderColor: vars.colors?.primaryLight,

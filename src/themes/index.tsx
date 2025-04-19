@@ -1,14 +1,14 @@
 import { createTheme, ThemeOptions } from '@mui/material/styles'
 
 import colors from '#/assets/scss/_themes-vars.module.scss'
-import { ThemeOptionsVars } from '#/themes/types.ts'
+import { Colors, ThemeOptionsVars } from '#/themes/types.ts'
 
 import componentStyleOverrides from './compStyleOverride'
 import themePalette from './palette'
 import themeTypography from './typography'
 
 export const theme = () => {
-  const color = colors
+  const color = colors as Colors
 
   const themeOptionsVars: ThemeOptionsVars = {
     fontFamily: `'Roboto', sans-serif`,
