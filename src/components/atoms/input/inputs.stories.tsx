@@ -11,11 +11,13 @@ const BodyInputs: FC<BaseInputProps> = (props) => (
 
     <Select
       placeholder="placeholder select"
+      initialValue="value_3"
       options={[
         { label: 'value 1', value: 'value_1' },
         { label: 'value 2', value: 'value_2' },
         { label: 'value 3', value: 'value_3' },
       ]}
+      onChange={(value) => console.log(value)}
       {...props}
     />
   </div>

@@ -4,13 +4,18 @@ import SelectBase, { Props } from 'react-select'
 
 import { BaseInputProps } from './props'
 
-type PropsFiltered = Omit<Props, 'onChange' | 'error' | 'defaultValue'>
-type SelectProps = PropsFiltered & BaseInputProps
+export type SelectProps = Omit<Props, 'onChange' | 'error' | 'defaultValue' | 'options'> &
+  BaseInputProps & {
+    options?: Array<{ label: string; value: string }>
+  }
 
 export const Select: FC<SelectProps> = (props) => {
-  const { initialValue, error, disabled, onChange, ...rest } = props
+  const { initialValue, error, disabled, onChange, value, options, ...rest } = props
 
   const theme = useTheme()
+
+  const valueOption = options?.find((option) => option.value === value)
+  const initialValueOption = options?.find((option) => option.value === initialValue)
 
   return (
     <div>
@@ -29,8 +34,11 @@ export const Select: FC<SelectProps> = (props) => {
           }),
         }}
         isDisabled={disabled}
-        defaultValue={initialValue}
-        onChange={(value) => onChange?.(value as unknown as string)}
+        defaultValue={initialValueOption}
+        value={valueOption}
+        options={options}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onChange={(option: any) => onChange?.(option.value)}
         {...rest}
       />
 

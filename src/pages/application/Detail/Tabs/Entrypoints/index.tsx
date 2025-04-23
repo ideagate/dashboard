@@ -22,6 +22,11 @@ const EntrypointPage: FC = () => {
   })
   const entrypoints = rqEntrypoints.data?.endpoints || []
 
+  const handleCloseCreate = () => {
+    setIsCreateMode(false)
+    rqEntrypoints.refetch()
+  }
+
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={3} gap={2}>
@@ -38,7 +43,7 @@ const EntrypointPage: FC = () => {
         </IconButton>
       </Box>
 
-      {isCreateMode && <CreateEntrypoint onClose={() => setIsCreateMode(false)} />}
+      {isCreateMode && <CreateEntrypoint onClose={handleCloseCreate} />}
       {entrypoints.map((entrypoint) => (
         <EntrypointItem key={entrypoint.id} entrypoint={entrypoint} />
       ))}

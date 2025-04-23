@@ -13,7 +13,7 @@ export const TextField: FC<TextFieldProps> = (props) => {
     <TextFieldMui
       size="small"
       onChange={(e) => onChange?.(e.target.value)}
-      error={error != null}
+      error={error != null && error.trim() !== ''}
       helperText={error}
       {...rest}
     />

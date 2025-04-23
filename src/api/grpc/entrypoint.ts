@@ -1,5 +1,6 @@
 import { Endpoint } from '@ideagate/model/core/endpoint/endpoint'
 import { CreateEndpointRequest, GetListEndpointRequest } from '@ideagate/model/dashboard/endpoint'
+import { PartialDeep } from 'type-fest'
 
 import { dashboardService } from './init'
 
@@ -8,9 +9,9 @@ export async function getEntrypoints(req: Partial<GetListEndpointRequest>) {
   return resp.response
 }
 
-export async function createEntrypoint(entrypoint: Partial<Endpoint>) {
+export async function createEntrypoint(entrypoint: PartialDeep<Endpoint>) {
   const req = CreateEndpointRequest.create({
-    endpoint: entrypoint,
+    endpoint: entrypoint as Endpoint,
   })
 
   const resp = await dashboardService.createEndpoint(req)
