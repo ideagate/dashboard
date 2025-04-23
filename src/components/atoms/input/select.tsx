@@ -31,6 +31,7 @@ export const Select: FC<SelectProps> = (props) => {
             ':hover': {
               cursor: control.isDisabled ? 'not-allowed' : 'pointer',
             },
+            borderColor: error ? theme.opts.colors.errorMain : '#ccd5df',
           }),
         }}
         isDisabled={disabled}

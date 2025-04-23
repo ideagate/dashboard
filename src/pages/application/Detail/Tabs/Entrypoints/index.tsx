@@ -1,36 +1,32 @@
 import AddIcon from '@mui/icons-material/Add'
 import { Box, IconButton, TextField, useTheme } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
 import { FC, useState } from 'react'
-import { useParams } from 'react-router-dom'
-
-import { getEntrypoints } from '#/api/grpc/entrypoint'
 
 import CreateEntrypoint from './components/CreateEntrypoint'
 import EntrypointItem from './components/EntrypointItem'
+import useEntrypoints from './hooks/entrypoints'
 
 const EntrypointPage: FC = () => {
-  const { project_id, app_id } = useParams()
-
   const theme = useTheme()
 
   const [isCreateMode, setIsCreateMode] = useState(false)
 
-  const rqEntrypoints = useQuery({
-    queryKey: ['entrypoints', project_id, app_id],
-    queryFn: () => getEntrypoints({ projectId: project_id, applicationId: app_id }),
-  })
-  const entrypoints = rqEntrypoints.data?.endpoints || []
+  const { entrypoints, refetchEntrypoints, searchEntrypoints } = useEntrypoints()
 
   const handleCloseCreate = () => {
     setIsCreateMode(false)
-    rqEntrypoints.refetch()
+    refetchEntrypoints()
   }
 
   return (
     <Box>
       <Box display="flex" alignItems="center" mb={3} gap={2}>
-        <TextField fullWidth size="small" placeholder="Search entrypoints" />
+        <TextField
+          fullWidth
+          size="small"
+          placeholder="Search entrypoints"
+          onChange={(e) => searchEntrypoints(e.target.value)}
+        />
         <IconButton
           sx={{
             backgroundColor: theme.palette.primary.main,
