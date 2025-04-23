@@ -6,7 +6,7 @@ import StepDetail from './components/StepDetail'
 
 const WorkflowTab: FC = () => {
   return (
-    <Grid2 container spacing={2} padding={3}>
+    <Grid2 container spacing={2}>
       <Grid2 size="grow">
         <Paper variant="outlined" sx={{ padding: 0.5 }}>
           <Pipeline />
