@@ -23,7 +23,7 @@
     "@fontsource/inter": "^5.1.1",
     "@fontsource/poppins": "^5.1.1",
     "@fontsource/roboto": "^5.1.1",
-    "@ideagate/model": "0.0.5",
+    "@ideagate/model": "0.0.10",
     "@mui/icons-material": "^6.3.0",
     "@mui/material": "^6.1.5",
     "@protobuf-ts/grpcweb-transport": "^2.9.4",
@@ -42,6 +42,7 @@
     "react-perfect-scrollbar": "^1.5.8",
     "react-router-dom": "^6.27.0",
     "react-select": "^5.8.1",
+    "uuid": "^11.1.0",
     "yup": "^1.6.1"
   },
   "devDependencies": {

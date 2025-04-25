@@ -24,8 +24,8 @@ importers:
         specifier: ^5.1.1
         version: 5.1.1
       '@ideagate/model':
-        specifier: 0.0.5
-        version: 0.0.5
+        specifier: 0.0.10
+        version: 0.0.10
       '@mui/icons-material':
         specifier: ^6.3.0
         version: 6.3.0(@mui/material@6.1.5(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react@18.3.1))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.12)(react@18.3.1)
@@ -80,6 +80,9 @@ importers:
       react-select:
         specifier: ^5.8.1
         version: 5.8.1(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
       yup:
         specifier: ^1.6.1
         version: 1.6.1
@@ -581,8 +584,8 @@ packages:
     resolution: {integrity: sha512-JBxkERygn7Bv/GbN5Rv8Ul6LVknS+5Bp6RgDC/O8gEBU/yeH5Ui5C/OlWrTb6qct7LjjfT6Re2NxB0ln0yYybA==}
     engines: {node: '>=18.18'}
 
-  '@ideagate/model@0.0.5':
-    resolution: {integrity: sha512-viuV3s9+tjGVShDB78tANfWbgVXm27yDkKnsuEa1yZNU5lHC3tmCwuWPqE3wPcCD8WqlJuzISrAtXGD7D/VyGQ==, tarball: https://npm.pkg.github.com/download/@ideagate/model/0.0.5/239e23b97e25b91167a60e4e4ad6f435ba1e9fc9}
+  '@ideagate/model@0.0.10':
+    resolution: {integrity: sha512-E8LTJ36HrBdoETqsIa6GyxUzT2/hlMI2ntur8QDH+vS7DLKAE+NrOpqZnT2eLeJYTbGHP7KK1MdA2cmvBcI4Cg==, tarball: https://npm.pkg.github.com/download/@ideagate/model/0.0.10/1026bc6400a1c740501c9c7045201caabe893f01}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -3672,6 +3675,10 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
+
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
@@ -4252,7 +4259,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.3.1': {}
 
-  '@ideagate/model@0.0.5':
+  '@ideagate/model@0.0.10':
     dependencies:
       '@protobuf-ts/runtime': 2.9.4
       '@protobuf-ts/runtime-rpc': 2.9.4
@@ -7715,6 +7722,8 @@ snapshots:
       which-typed-array: 1.1.15
 
   utils-merge@1.0.1: {}
+
+  uuid@11.1.0: {}
 
   uuid@8.3.2: {}
 

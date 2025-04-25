@@ -1,26 +1,28 @@
-import { Box, InputAdornment, Stack, TextField, Typography } from '@mui/material'
+import { Box, InputAdornment, Stack, Typography } from '@mui/material'
 import { FC } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-import { mockNodes } from '../../models/mock'
+import { TextField } from '#/components/atoms/input'
+
+import { useWorkflow } from '../../hooks/workflow'
 
 const StepDetail: FC = () => {
   const [searchParams] = useSearchParams()
+  const { workflow } = useWorkflow()
 
   const stepId = searchParams.get('step_id')
 
-  const node = mockNodes.find((node) => node.id === stepId)
-
-  if (node == undefined) {
+  const step = workflow?.steps.find((step) => step.id === stepId)
+  if (step == undefined) {
     return <Box>Empty</Box>
   }
 
   return (
     <Box>
       <Stack spacing={2}>
-        <Typography variant="h3">{node.type}</Typography>
+        <Typography variant="h3">{step?.name}</Typography>
         <Typography>ID: {stepId}</Typography>
-        <TextField fullWidth label="Name" />
+        <TextField fullWidth label="Name" value={step.name || ''} />
         <TextField
           fullWidth
           type="number"

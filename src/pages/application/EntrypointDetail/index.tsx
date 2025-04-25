@@ -48,6 +48,15 @@ const EntrypointDetail: FC = () => {
     setSearchParams({ tab }, { replace: true })
   }
 
+  const Body = () => {
+    switch (tab) {
+      case 'setting':
+        return <div>Settings</div>
+      default:
+        return <Workflow />
+    }
+  }
+
   return (
     <>
       <Card
@@ -89,7 +98,7 @@ const EntrypointDetail: FC = () => {
           </Tabs>
           <Divider sx={{ marginBottom: 2 }} />
 
-          <Workflow />
+          {Body()}
         </CardContent>
       </Card>
     </>

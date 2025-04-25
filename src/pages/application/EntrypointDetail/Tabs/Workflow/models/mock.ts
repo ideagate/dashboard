@@ -1,16 +1,60 @@
-import { useEdgesState, useNodesState } from '@xyflow/react'
+import { StepType, Workflow } from '@ideagate/model/core/endpoint/workflow'
+import { PartialDeep } from 'type-fest'
 
-export const mockNodes: Parameters<typeof useNodesState>[0] = [
-  { id: '1', type: 'start', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', type: 'sleep', position: { x: 150, y: 0 }, data: { label: '2' } },
-  { id: '3', type: 'sleep', position: { x: 300, y: 0 }, data: { label: '3' } },
-  {
-    id: '4',
-    type: 'sleep',
-    position: { x: 230, y: 100 },
-    data: { label: '4' },
-  },
-  { id: '5', type: 'end', position: { x: 450, y: 0 }, data: { label: '5' } },
-]
-
-export const mockEdges: Parameters<typeof useEdgesState>[0] = [{ id: 'e1-2', source: '1', target: '2', animated: true }]
+export const mockWorkflow: PartialDeep<Workflow, { recurseIntoArrays: true }> = {
+  version: 1n,
+  steps: [
+    {
+      id: '1',
+      type: StepType.START,
+      name: 'Start',
+      graph: {
+        positionX: 0,
+        positionY: 0,
+      },
+    },
+    {
+      id: '2',
+      type: StepType.SLEEP,
+      name: 'Sleep 1',
+      graph: {
+        positionX: 150,
+        positionY: 0,
+      },
+    },
+    {
+      id: '3',
+      type: StepType.SLEEP,
+      name: 'Sleep 2',
+      graph: {
+        positionX: 300,
+        positionY: 0,
+      },
+    },
+    {
+      id: '4',
+      type: StepType.SLEEP,
+      name: 'Sleep 3',
+      graph: {
+        positionX: 230,
+        positionY: 100,
+      },
+    },
+    {
+      id: '5',
+      type: StepType.END,
+      name: 'End',
+      graph: {
+        positionX: 450,
+        positionY: 0,
+      },
+    },
+  ],
+  edges: [
+    {
+      id: 'e1-2',
+      source: '1',
+      dest: '2',
+    },
+  ],
+}
