@@ -2,6 +2,9 @@ import { StepType, Workflow } from '@ideagate/model/core/endpoint/workflow'
 import { PartialDeep } from 'type-fest'
 
 export const mockWorkflow: PartialDeep<Workflow, { recurseIntoArrays: true }> = {
+  projectId: 'test-project',
+  applicationId: 'test-application',
+  entrypointId: 'admin-list',
   version: 1n,
   steps: [
     {

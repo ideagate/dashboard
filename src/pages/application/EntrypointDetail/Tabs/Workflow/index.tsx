@@ -1,14 +1,22 @@
-import { Grid2, Paper } from '@mui/material'
+import { Box, Grid2, Paper } from '@mui/material'
 import { FC } from 'react'
 
 import WorkflowAction from './components/Action'
 import Pipeline from './components/Pipeline'
 import StepDetail from './components/StepDetail'
-import { WorkflowProvider } from './hooks/workflow'
+import Workflows from './components/Workflows'
+import { useWorkflow, WorkflowProvider } from './hooks/workflow'
 
-const WorkflowTab: FC = () => {
+const WorkflowTabBody: FC = () => {
+  const { isLoading } = useWorkflow()
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
   return (
-    <WorkflowProvider>
+    <Box>
+      <Workflows />
       <Grid2 container spacing={2}>
         <Grid2 size="grow">
           <Paper variant="outlined" sx={{ padding: 0.5 }}>
@@ -22,8 +30,14 @@ const WorkflowTab: FC = () => {
         </Grid2>
       </Grid2>
       <WorkflowAction />
-    </WorkflowProvider>
+    </Box>
   )
 }
+
+const WorkflowTab: FC = () => (
+  <WorkflowProvider>
+    <WorkflowTabBody />
+  </WorkflowProvider>
+)
 
 export default WorkflowTab

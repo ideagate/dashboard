@@ -10,7 +10,7 @@ const Button: FC<ButtonProps> = (props) => {
   const { variant, children, ...rest } = props
 
   return (
-    <ButtonMui {...rest} variant={variant}>
+    <ButtonMui {...rest} variant={variant} disableElevation>
       {children}
     </ButtonMui>
   )

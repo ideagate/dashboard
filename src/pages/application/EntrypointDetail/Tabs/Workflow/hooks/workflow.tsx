@@ -1,5 +1,6 @@
 import { Edge as PbEdge, Step as PbStep, StepType, Workflow } from '@ideagate/model/core/endpoint/workflow'
 import { Box } from '@mui/material'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import {
   OnConnectEnd,
   ReactFlowProps as ReactFlowPropsOriginal,
@@ -9,16 +10,19 @@ import {
   useReactFlow,
 } from '@xyflow/react'
 import { createContext, useCallback, useContext } from 'react'
+import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
-import { mockWorkflow } from '../models/mock'
+import { getWorkflows, updateWorkflow } from '#/api/grpc/workflow'
+
 import { Edge, Node } from '../types/graph'
-import { workflowToGraph } from '../utils/graph'
+import { graphEdgesToWorkflowEdges, graphNodesToWorkflowSteps, workflowToGraph } from '../utils/graph'
 
 type ReactFlowProps = ReactFlowPropsOriginal<Node, Edge>
 
 interface WorkflowContextType {
-  workflow: Workflow
+  workflows: Workflow[]
+  workflow: Workflow | null
   isLoading: boolean
   saveWorkflow: () => void
 
@@ -30,7 +34,8 @@ interface WorkflowContextType {
 }
 
 const WorkflowContext = createContext<WorkflowContextType>({
-  workflow: null as unknown as Workflow,
+  workflows: [],
+  workflow: null,
   isLoading: true,
   saveWorkflow: () => {},
   nodes: [],
@@ -41,25 +46,44 @@ const WorkflowContext = createContext<WorkflowContextType>({
 })
 
 const WorkflowProviderBody: React.FC<{ children: React.ReactNode }> = (props) => {
-  // const { project_id, app_id, entrypoint_id } = useParams()
+  const { project_id, app_id, entrypoint_id } = useParams()
 
-  // // Fetch workflow data
-  // const { data, isLoading } = useQuery({
-  //   queryKey: ['workflow', project_id, app_id, entrypoint_id],
-  // })
-  const workflow = mockWorkflow as Workflow
-  const isLoading = false
+  // Fetch workflow data
+  const { data: workflows = [], isLoading } = useQuery({
+    queryKey: ['workflow', project_id, app_id, entrypoint_id],
+    queryFn: async () => {
+      const resp = await getWorkflows({
+        projectId: project_id,
+        applicationId: app_id,
+        entrypointId: entrypoint_id,
+        version: 1n,
+      })
+
+      if (resp.workflows.length > 0) {
+        const { nodes, edges } = workflowToGraph(resp.workflows[0])
+        setNodes(nodes)
+        setEdges(edges)
+      }
+
+      return resp
+    },
+    select: (data) => data.workflows,
+  })
+
+  const workflow = workflows?.[0]
+
+  // Mutation function to save workflow
+  const rmWorkflow = useMutation({
+    mutationFn: async (workflow: Workflow) => {
+      updateWorkflow({ workflow })
+    },
+  })
 
   const { screenToFlowPosition } = useReactFlow()
 
   const { nodes: initialNodes, edges: initialEdges } = workflowToGraph(workflow)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
-
-  // const onConnect = useCallback(
-  //   (params: Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
-  //   [setEdges]
-  // )
 
   const onConnectEnd: OnConnectEnd = useCallback(
     (event, connectionState) => {
@@ -116,19 +140,19 @@ const WorkflowProviderBody: React.FC<{ children: React.ReactNode }> = (props) =>
     [screenToFlowPosition, setEdges, setNodes]
   )
 
-  const saveWorkflow = () => {
+  const saveWorkflow = async () => {
     const newWorkflow: Workflow = {
       ...workflow,
-      steps: nodes.map((node) => node.data.step),
-      edges: edges.map((edge) => edge.data.edge),
+      steps: graphNodesToWorkflowSteps(nodes),
+      edges: graphEdgesToWorkflowEdges(edges),
     }
-
-    console.log('saveWorkflow', newWorkflow)
+    await rmWorkflow.mutateAsync(newWorkflow)
   }
 
   return (
     <WorkflowContext.Provider
       value={{
+        workflows,
         workflow,
         isLoading,
         saveWorkflow,
