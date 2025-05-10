@@ -1,5 +1,6 @@
 import AccountTreeIcon from '@mui/icons-material/AccountTree'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered'
 import SettingsIcon from '@mui/icons-material/Settings'
 import {
   Box,
@@ -21,6 +22,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { getListApps } from '#/api/grpc/application'
 import { getEntrypoints } from '#/api/grpc/entrypoint'
 
+import Version from './Tabs/Version'
 import Workflow from './Tabs/Workflow'
 
 const EntrypointDetail: FC = () => {
@@ -52,6 +54,8 @@ const EntrypointDetail: FC = () => {
     switch (tab) {
       case 'setting':
         return <div>Settings</div>
+      case 'version':
+        return <Version />
       default:
         return <Workflow />
     }
@@ -86,7 +90,7 @@ const EntrypointDetail: FC = () => {
           <Link to={linkApplication}>
             <Typography>{application?.name}</Typography>
           </Link>
-          ,<Typography>{entrypoint_id}</Typography>]
+          ,<Typography>{entrypoint?.name}</Typography>]
         </Breadcrumbs>
       </Card>
 
@@ -94,6 +98,7 @@ const EntrypointDetail: FC = () => {
         <CardContent>
           <Tabs value={tab} onChange={onChangeTab} sx={{ minHeight: 0 }}>
             <TabCustom value={'workflow'} icon={<AccountTreeIcon />} iconPosition="start" label="Workflow" />
+            <TabCustom value={'version'} icon={<FormatListNumberedIcon />} iconPosition="start" label="Version" />
             <TabCustom value={'setting'} icon={<SettingsIcon />} iconPosition="start" label="Settings" />
           </Tabs>
           <Divider sx={{ marginBottom: 2 }} />

@@ -9,7 +9,7 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react'
-import { createContext, useCallback, useContext } from 'react'
+import { createContext, FC, useCallback, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -45,7 +45,7 @@ const WorkflowContext = createContext<WorkflowContextType>({
   onConnectEnd: () => {},
 })
 
-const WorkflowProviderBody: React.FC<{ children: React.ReactNode }> = (props) => {
+const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
   const { project_id, app_id, entrypoint_id } = useParams()
 
   // Fetch workflow data
@@ -168,7 +168,7 @@ const WorkflowProviderBody: React.FC<{ children: React.ReactNode }> = (props) =>
   )
 }
 
-export const WorkflowProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+export const WorkflowProvider: FC<{ children: React.ReactNode }> = ({ children }) => (
   <ReactFlowProvider>
     <WorkflowProviderBody>{children}</WorkflowProviderBody>
   </ReactFlowProvider>
