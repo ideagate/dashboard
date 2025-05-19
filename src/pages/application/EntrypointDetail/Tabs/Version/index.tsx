@@ -33,8 +33,12 @@ const VersionTabBody: FC = () => {
             <Box>
               <Typography variant="h4">Version {workflow.version.toString()}</Typography>
               <Typography variant="caption">
-                Created at {moment.unix(Number(workflow.createdAt?.seconds)).startOf('hours').fromNow()} and updated at{' '}
-                {moment.unix(Number(workflow.updatedAt?.seconds)).startOf('hours').fromNow()}
+                <span>Created at {moment.unix(Number(workflow.createdAt?.seconds)).startOf('seconds').fromNow()} </span>
+                {workflow.createdAt?.seconds !== workflow.updatedAt?.seconds && (
+                  <span>
+                    and last updated at {moment.unix(Number(workflow.updatedAt?.seconds)).startOf('seconds').fromNow()}
+                  </span>
+                )}
               </Typography>
             </Box>
             <Box>

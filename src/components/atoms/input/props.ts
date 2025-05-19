@@ -5,4 +5,5 @@ export interface BaseInputProps {
   initialValue?: string
   value?: string
   onChange?: (value: string) => void
+  fullWidth?: boolean
 }

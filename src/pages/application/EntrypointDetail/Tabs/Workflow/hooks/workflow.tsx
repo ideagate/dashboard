@@ -10,7 +10,7 @@ import {
   useReactFlow,
 } from '@xyflow/react'
 import { createContext, FC, useCallback, useContext } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 import { getWorkflows, updateWorkflow } from '#/api/grpc/workflow'
@@ -31,6 +31,9 @@ interface WorkflowContextType {
   onNodesChange: ReactFlowProps['onNodesChange']
   onEdgesChange: ReactFlowProps['onEdgesChange']
   onConnectEnd: ReactFlowProps['onConnectEnd']
+
+  currentVersion: bigint
+  setCurrentVersion: (version: bigint) => void
 }
 
 const WorkflowContext = createContext<WorkflowContextType>({
@@ -43,34 +46,49 @@ const WorkflowContext = createContext<WorkflowContextType>({
   onNodesChange: () => {},
   onEdgesChange: () => {},
   onConnectEnd: () => {},
+  currentVersion: 0n,
+  setCurrentVersion: () => {},
 })
 
 const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
   const { project_id, app_id, entrypoint_id } = useParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   // Fetch workflow data
-  const { data: workflows = [], isLoading } = useQuery({
-    queryKey: ['workflow', project_id, app_id, entrypoint_id],
+  const { data, isLoading, refetch } = useQuery<{ workflows: Workflow[]; workflow: Workflow }>({
+    queryKey: ['workflows', project_id, app_id, entrypoint_id],
     queryFn: async () => {
-      const resp = await getWorkflows({
+      const respWorkflows = await getWorkflows({
         projectId: project_id,
         applicationId: app_id,
         entrypointId: entrypoint_id,
-        version: 1n,
       })
 
-      if (resp.workflows.length > 0) {
-        const { nodes, edges } = workflowToGraph(resp.workflows[0])
-        setNodes(nodes)
-        setEdges(edges)
+      if (respWorkflows.workflows.length === 0) {
+        return { workflows: [], workflow: Workflow.create() }
       }
 
-      return resp
-    },
-    select: (data) => data.workflows,
-  })
+      const respWorkflow = await getWorkflows({
+        projectId: project_id,
+        applicationId: app_id,
+        entrypointId: entrypoint_id,
+        version: getCurrentVersion(),
+      })
 
-  const workflow = workflows?.[0]
+      const { nodes, edges } = workflowToGraph(respWorkflow.workflows[0])
+      setNodes(nodes)
+      setEdges(edges)
+
+      return {
+        workflows: respWorkflows.workflows,
+        workflow: respWorkflow?.workflows[0] || null,
+      }
+    },
+    initialData: {
+      workflows: [],
+      workflow: Workflow.create(),
+    },
+  })
 
   // Mutation function to save workflow
   const rmWorkflow = useMutation({
@@ -79,12 +97,12 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
     },
   })
 
-  const { screenToFlowPosition } = useReactFlow()
-
-  const { nodes: initialNodes, edges: initialEdges } = workflowToGraph(workflow)
+  // React flow state
+  const { nodes: initialNodes, edges: initialEdges } = workflowToGraph(data.workflow)
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
+  const { screenToFlowPosition } = useReactFlow()
   const onConnectEnd: OnConnectEnd = useCallback(
     (event, connectionState) => {
       const createNewEdge = (sourceId: string, targetId: string): Edge => {
@@ -142,18 +160,30 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
 
   const saveWorkflow = async () => {
     const newWorkflow: Workflow = {
-      ...workflow,
+      ...data.workflow,
       steps: graphNodesToWorkflowSteps(nodes),
       edges: graphEdgesToWorkflowEdges(edges),
     }
     await rmWorkflow.mutateAsync(newWorkflow)
   }
 
+  // Current version
+  const getCurrentVersion = () => {
+    if (!searchParams.has('version')) {
+      return BigInt(data.workflows[0]?.version || 0)
+    }
+    return BigInt(searchParams.get('version') || 0)
+  }
+  const setCurrentVersion = (version: bigint) => {
+    setSearchParams((prev) => ({ ...prev, version: version.toString() }), { replace: true })
+    refetch()
+  }
+
   return (
     <WorkflowContext.Provider
       value={{
-        workflows,
-        workflow,
+        workflows: data.workflows,
+        workflow: data.workflow,
         isLoading,
         saveWorkflow,
         nodes,
@@ -161,9 +191,11 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         onNodesChange,
         onEdgesChange,
         onConnectEnd,
+        currentVersion: getCurrentVersion(),
+        setCurrentVersion: setCurrentVersion,
       }}
     >
-      {workflow != null ? props.children : <Box>Loading Workflow ...</Box>}
+      {!isLoading ? props.children : <Box>Loading Workflow ...</Box>}
     </WorkflowContext.Provider>
   )
 }

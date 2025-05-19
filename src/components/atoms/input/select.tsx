@@ -1,4 +1,4 @@
-import { Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { FC } from 'react'
 import SelectBase, { Props } from 'react-select'
 
@@ -10,7 +10,7 @@ export type SelectProps = Omit<Props, 'onChange' | 'error' | 'defaultValue' | 'o
   }
 
 export const Select: FC<SelectProps> = (props) => {
-  const { initialValue, error, disabled, onChange, value, options, ...rest } = props
+  const { initialValue, error, disabled, onChange, value, options, fullWidth, ...rest } = props
 
   const theme = useTheme()
 
@@ -18,7 +18,7 @@ export const Select: FC<SelectProps> = (props) => {
   const initialValueOption = options?.find((option) => option.value === initialValue)
 
   return (
-    <div>
+    <Box width={fullWidth ? '100%' : 'none'}>
       <SelectBase
         styles={{
           control: (baseStyle, control) => ({
@@ -48,6 +48,6 @@ export const Select: FC<SelectProps> = (props) => {
           {error}
         </Typography>
       )}
-    </div>
+    </Box>
   )
 }
