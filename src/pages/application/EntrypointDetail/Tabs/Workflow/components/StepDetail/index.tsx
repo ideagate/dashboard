@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom'
 import { TextField } from '#/components/atoms/input'
 
 import { useWorkflow } from '../../hooks/workflow'
+import NewStep from './NewStep'
 
 const StepDetail: FC = () => {
   const [searchParams] = useSearchParams()
@@ -14,7 +15,7 @@ const StepDetail: FC = () => {
 
   const step = workflow?.steps.find((step) => step.id === stepId)
   if (step == undefined) {
-    return <Box>Empty</Box>
+    return <NewStep />
   }
 
   return (

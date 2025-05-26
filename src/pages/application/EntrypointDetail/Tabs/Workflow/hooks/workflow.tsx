@@ -9,12 +9,13 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react'
-import { createContext, FC, useCallback, useContext } from 'react'
+import { createContext, DragEvent, FC, useCallback, useContext } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { v4 as uuidv4 } from 'uuid'
 
 import { getWorkflows, updateWorkflow } from '#/api/grpc/workflow'
 
+import { nodeTypes } from '../components/Pipeline/nodes'
 import { Edge, Node } from '../types/graph'
 import { graphEdgesToWorkflowEdges, graphNodesToWorkflowSteps, workflowToGraph } from '../utils/graph'
 
@@ -28,6 +29,8 @@ interface WorkflowContextType {
 
   nodes: Node[]
   edges: Edge[]
+  onDrop: ReactFlowProps['onDrop']
+  onDragOver: ReactFlowProps['onDragOver']
   onNodesChange: ReactFlowProps['onNodesChange']
   onEdgesChange: ReactFlowProps['onEdgesChange']
   onConnectEnd: ReactFlowProps['onConnectEnd']
@@ -43,6 +46,8 @@ const WorkflowContext = createContext<WorkflowContextType>({
   saveWorkflow: () => {},
   nodes: [],
   edges: [],
+  onDrop: () => {},
+  onDragOver: () => {},
   onNodesChange: () => {},
   onEdgesChange: () => {},
   onConnectEnd: () => {},
@@ -103,8 +108,17 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
   const { screenToFlowPosition } = useReactFlow()
+
   const onConnectEnd: OnConnectEnd = useCallback(
-    (event, connectionState) => {
+    (_, connectionState) => {
+      // when a connection is dropped on the pane
+      // ignore it
+      if (!connectionState.isValid) {
+        return
+      }
+
+      // when a connection is dropped on a existing node
+      // create a new connection to an existing node
       const createNewEdge = (sourceId: string, targetId: string): Edge => {
         const newEdgeId = uuidv4()
         return {
@@ -122,42 +136,53 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         }
       }
 
-      if (connectionState.isValid) {
-        // when a connection is dropped on a existing node
-        // create a new connection to an existing node
-        const newEdge = createNewEdge(connectionState.fromNode?.id || '', connectionState.toNode?.id || '')
-        setEdges((eds) => eds.concat(newEdge))
-      } else {
-        // when a connection is dropped on the pane
-        // create a new node
-        const newNodeId = uuidv4()
-        const { clientX, clientY } = 'changedTouches' in event ? event.changedTouches[0] : event
-        const newNode: Node = {
-          id: newNodeId,
-          type: StepType.SLEEP.toString(),
-          position: screenToFlowPosition({
-            x: clientX,
-            y: clientY,
-          }),
-          data: {
-            step: PbStep.create({
-              id: newNodeId,
-              name: 'Sleep',
-              type: StepType.SLEEP,
-            }),
-          },
-          origin: [0, 0.5],
-        }
-        setNodes((nds) => nds.concat(newNode))
-
-        // creeate a new connection to the new node
-        const newEdge = createNewEdge(connectionState.fromNode?.id || '', newNodeId)
-        setEdges((eds) => eds.concat(newEdge))
-      }
+      const newEdge = createNewEdge(connectionState.fromNode?.id || '', connectionState.toNode?.id || '')
+      setEdges((eds) => eds.concat(newEdge))
     },
-    [screenToFlowPosition, setEdges, setNodes]
+    [setEdges]
   )
 
+  const onDragOver: ReactFlowProps['onDragOver'] = useCallback((event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+  }, [])
+
+  const onDrop: ReactFlowProps['onDrop'] = useCallback(
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault()
+
+      // create a new node
+      const newNodeId = uuidv4()
+      const stepTypeString = event.dataTransfer.getData('text/plain') as string
+      const stepType = StepType[stepTypeString as keyof typeof StepType]
+
+      // check if the step type is valid
+      if (nodeTypes[stepTypeString] == null) {
+        return
+      }
+
+      const { clientX, clientY } = event
+      const newNode: Node = {
+        id: newNodeId,
+        type: stepTypeString,
+        position: screenToFlowPosition({
+          x: clientX,
+          y: clientY,
+        }),
+        data: {
+          step: PbStep.create({
+            id: newNodeId,
+            name: 'Sleep',
+            type: stepType,
+          }),
+        },
+        origin: [0.5, 0.5],
+      }
+      setNodes((nds) => nds.concat(newNode))
+    },
+    [screenToFlowPosition, setNodes]
+  )
+
+  // Save workflow
   const saveWorkflow = async () => {
     const newWorkflow: Workflow = {
       ...data.workflow,
@@ -188,6 +213,8 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         saveWorkflow,
         nodes,
         edges,
+        onDrop,
+        onDragOver,
         onNodesChange,
         onEdgesChange,
         onConnectEnd,

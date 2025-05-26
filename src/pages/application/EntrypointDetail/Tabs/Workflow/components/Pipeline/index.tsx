@@ -8,13 +8,15 @@ import Control from './Control'
 import { nodeTypes } from './nodes'
 
 const Workflow: FC = () => {
-  const { nodes, edges, onNodesChange, onEdgesChange, onConnectEnd } = useWorkflow()
+  const { nodes, edges, onDrop, onDragOver, onNodesChange, onEdgesChange, onConnectEnd } = useWorkflow()
 
   return (
     <div style={{ width: '100%', height: '600px', backgroundColor: 'white' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onDrop={onDrop}
+        onDragOver={onDragOver}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnectEnd={onConnectEnd}
