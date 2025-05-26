@@ -1,4 +1,4 @@
-import { Edge as PbEdge, Step as PbStep, StepType, Workflow } from '@ideagate/model/core/endpoint/workflow'
+import { Edge as PbEdge, Step as PbStep, Workflow } from '@ideagate/model/core/endpoint/workflow'
 import { Box } from '@mui/material'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import {
@@ -152,18 +152,17 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
 
       // create a new node
       const newNodeId = uuidv4()
-      const stepTypeString = event.dataTransfer.getData('text/plain') as string
-      const stepType = StepType[stepTypeString as keyof typeof StepType]
+      const stepType = event.dataTransfer.getData('text/plain') as string
 
       // check if the step type is valid
-      if (nodeTypes[stepTypeString] == null) {
+      if (nodeTypes[stepType] == null) {
         return
       }
 
       const { clientX, clientY } = event
       const newNode: Node = {
         id: newNodeId,
-        type: stepTypeString,
+        type: stepType,
         position: screenToFlowPosition({
           x: clientX,
           y: clientY,
@@ -172,7 +171,7 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
           step: PbStep.create({
             id: newNodeId,
             name: 'Sleep',
-            type: stepType,
+            type: Number(stepType),
           }),
         },
         origin: [0.5, 0.5],
