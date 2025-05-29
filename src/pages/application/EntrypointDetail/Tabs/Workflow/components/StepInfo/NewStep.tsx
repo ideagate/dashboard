@@ -8,7 +8,7 @@ const NewStep: FC = () => {
     <Box>
       <Typography variant="h3">Insert New Node</Typography>
       <Typography mb={3}>Drag node into workflow graph</Typography>
-      <Box display="flex" gap={2} flexWrap="wrap" justifyContent="space-between">
+      <Box display="flex" flexWrap="wrap">
         <Node stepType={StepType.START} />
         <Node stepType={StepType.END} />
         <Node stepType={StepType.MYSQL} />
@@ -50,10 +50,16 @@ const Node: FC<{ stepType: StepType }> = ({ stepType }) => {
   const nodeAttribute = nodeAttributes[stepType]
 
   return (
-    <Box onDragStart={onDragStart} draggable sx={{ transform: 'translate(0,0)' }}>
+    <Box
+      component="div"
+      className="cursor-move p-3 hover:drop-shadow-2xl"
+      onDragStart={onDragStart}
+      draggable
+      sx={{ transform: 'translate(0,0)' }}
+    >
       <Box
         component="div"
-        className={`bg-[${nodeAttribute.color}] cursor-move p-[15px] rounded-[15px] w-fit`}
+        className={`bg-[${nodeAttribute.color}]  p-[15px] rounded-[15px] w-fit`}
         sx={{ color: 'white' }}
       >
         {nodeAttribute.icon}

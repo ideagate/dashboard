@@ -1,5 +1,6 @@
 import { Step } from '@ideagate/model/core/endpoint/workflow'
-import { Box, InputAdornment, Stack, Typography } from '@mui/material'
+import { Box, IconButton, InputAdornment, Stack, Typography } from '@mui/material'
+import { IconX } from '@tabler/icons-react'
 import { FC } from 'react'
 
 import { TextField } from '#/components/atoms/input'
@@ -7,7 +8,11 @@ import { TextField } from '#/components/atoms/input'
 import { useWorkflow } from '../../hooks/workflow'
 
 const StepDetailSleep: FC<{ step: Step }> = ({ step }) => {
-  const { setNodeStepById } = useWorkflow()
+  const { setNodeStepById, setStepInfoId } = useWorkflow()
+
+  const handleClose = () => {
+    setStepInfoId(null)
+  }
 
   return (
     <Box>
@@ -15,6 +20,9 @@ const StepDetailSleep: FC<{ step: Step }> = ({ step }) => {
         <Box>
           <Typography>Type: Sleep</Typography>
           <Typography>ID: {step.id}</Typography>
+          <IconButton color="error" onClick={handleClose}>
+            <IconX />
+          </IconButton>
         </Box>
         <Box>
           <Typography>Name</Typography>

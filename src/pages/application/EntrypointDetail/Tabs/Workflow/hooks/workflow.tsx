@@ -25,7 +25,8 @@ interface WorkflowContextType {
   workflow: Workflow | null
   isLoading: boolean
   saveWorkflow: () => void
-  showStepInfo: (stepId: string) => void
+  setStepInfoId: (stepId: string | null) => void
+  stepInfoId: string | null
 
   nodes: Node[]
   edges: Edge[]
@@ -43,7 +44,8 @@ const WorkflowContext = createContext<WorkflowContextType>({
   workflow: null,
   isLoading: true,
   saveWorkflow: () => {},
-  showStepInfo: () => {},
+  setStepInfoId: () => {},
+  stepInfoId: null,
   nodes: [],
   edges: [],
   onDrop: () => {},
@@ -61,7 +63,7 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
     throw new Error('Project ID, Application ID, and Entrypoint ID are required to fetch workflows')
   }
 
-  const [, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
   // React flow state
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
@@ -184,10 +186,16 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
     await rmWorkflow.mutateAsync(newWorkflow)
   }
 
-  const showStepInfo = (stepId: string) => {
+  // Step info management
+  const stepInfoId = searchParams.get('step_id')
+  const showStepInfo = (stepId: string | null) => {
     setSearchParams(
       (prev) => {
-        prev.set('step_id', stepId)
+        if (stepId == null) {
+          prev.delete('step_id')
+        } else {
+          prev.set('step_id', stepId)
+        }
         return prev
       },
       { replace: true }
@@ -208,7 +216,8 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         workflow: data.workflow,
         isLoading,
         saveWorkflow,
-        showStepInfo,
+        setStepInfoId: showStepInfo,
+        stepInfoId,
         nodes,
         edges,
         onDrop,
