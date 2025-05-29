@@ -1,21 +1,18 @@
 import { IconPlayerPlay } from '@tabler/icons-react'
 import { Handle, NodeProps, Position } from '@xyflow/react'
 import { FC } from 'react'
-import { useSearchParams } from 'react-router-dom'
+
+import { useWorkflow } from '../../../hooks/workflow'
 
 const NodeStart: FC<NodeProps> = ({ id }) => {
-  const [, setSearchParams] = useSearchParams()
-
-  const handleClicked = () => {
-    setSearchParams((prev) => ({ ...prev, step_id: id }), { replace: true })
-  }
+  const { showStepInfo } = useWorkflow()
 
   return (
     <>
       <div
         className="bg-[#474e93] p-[15px] rounded-[15px] text-white"
         style={{ color: 'white' }}
-        onClick={handleClicked}
+        onClick={() => showStepInfo(id)}
       >
         <IconPlayerPlay />
       </div>

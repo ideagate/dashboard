@@ -1,32 +1,16 @@
-import { Box, Typography, useTheme } from '@mui/material'
-import moment from 'moment'
+import { Box, Typography } from '@mui/material'
 import { FC } from 'react'
 
 import { useWorkflow } from '../../hooks/workflow'
 
 const Workflows: FC = () => {
-  const { workflows, currentVersion, setCurrentVersion } = useWorkflow()
-  const theme = useTheme()
+  const { currentVersion } = useWorkflow()
 
   return (
     <Box display="flex">
-      {workflows.map((workflow) => (
-        <Box
-          key={workflow.version}
-          border="solid 1px #ccc"
-          borderRadius={theme.opts.borderRadius}
-          borderBottom={workflow.version === currentVersion ? 'solid 3px #000' : 'solid 1px #ccc'}
-          px={2}
-          py={1}
-          mb={2}
-          onClick={() => setCurrentVersion(workflow.version)}
-        >
-          <Typography>Version {workflow.version.toString()}</Typography>
-          <Typography variant="caption">
-            {moment.unix(Number(workflow.updatedAt?.seconds)).startOf('hours').fromNow()}
-          </Typography>
-        </Box>
-      ))}
+      <Typography variant="h3" mb={2}>
+        Version {currentVersion.toString()}
+      </Typography>
     </Box>
   )
 }

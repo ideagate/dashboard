@@ -1,7 +1,7 @@
 import { Workflow } from '@ideagate/model/core/endpoint/workflow'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createContext, FC, ReactNode, useContext } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 
 import { createWorkflow, deleteWorkflow, getWorkflows } from '#/api/grpc/workflow'
 
@@ -11,6 +11,7 @@ type WorkflowsContextType = {
   refetch: () => void
   createVersion: (arg0: { fromVersion?: bigint }) => Promise<void>
   deleteVersion: (version: bigint) => Promise<void>
+  changeVersion: (version: bigint) => void
 }
 
 const WorkflowsContext = createContext<WorkflowsContextType>({
@@ -19,10 +20,13 @@ const WorkflowsContext = createContext<WorkflowsContextType>({
   refetch: () => {},
   createVersion: async () => Promise.resolve(),
   deleteVersion: async () => Promise.resolve(),
+  changeVersion: () => {},
 })
 
 export const WorkflowsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { project_id, app_id, entrypoint_id } = useParams()
+
+  const [, setSearchParams] = useSearchParams()
 
   // Fetch workflows data
   const {
@@ -72,8 +76,12 @@ export const WorkflowsProvider: FC<{ children: ReactNode }> = ({ children }) => 
     await rmDeleteVersion.mutateAsync(version)
   }
 
+  const changeVersion = (version: bigint) => {
+    setSearchParams({ tab: 'workflow', version: version.toString() }, { replace: true })
+  }
+
   return (
-    <WorkflowsContext.Provider value={{ workflows, isLoading, refetch, createVersion, deleteVersion }}>
+    <WorkflowsContext.Provider value={{ workflows, isLoading, refetch, createVersion, deleteVersion, changeVersion }}>
       {children}
     </WorkflowsContext.Provider>
   )

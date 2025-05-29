@@ -15,6 +15,7 @@ export const TextField: FC<TextFieldProps> = (props) => {
       onChange={(e) => onChange?.(e.target.value)}
       error={error != null && error.trim() !== ''}
       helperText={error}
+      defaultValue={props.initialValue}
       {...rest}
     />
   )

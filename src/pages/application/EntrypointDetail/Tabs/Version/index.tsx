@@ -9,7 +9,7 @@ import { useWorkflows, WorkflowsProvider } from './hooks/workflows'
 
 const VersionTabBody: FC = () => {
   const theme = useTheme()
-  const { workflows, refetch, deleteVersion } = useWorkflows()
+  const { workflows, refetch, deleteVersion, changeVersion } = useWorkflows()
 
   const handleDeleteVersion = async (version: bigint) => {
     await deleteVersion(version)
@@ -43,7 +43,7 @@ const VersionTabBody: FC = () => {
             </Box>
             <Box>
               <IconButton color="info">
-                <VisibilityOutlinedIcon />
+                <VisibilityOutlinedIcon onClick={() => changeVersion(workflow.version)} />
               </IconButton>
               <IconButton color="error" onClick={() => handleDeleteVersion(workflow.version)}>
                 <DeleteOutlinedIcon />

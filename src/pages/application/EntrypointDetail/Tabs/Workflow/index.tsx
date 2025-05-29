@@ -3,17 +3,11 @@ import { FC } from 'react'
 
 import WorkflowAction from './components/Action'
 import Pipeline from './components/Pipeline'
-import StepDetail from './components/StepDetail'
+import StepDetail from './components/StepInfo'
 import Workflows from './components/Workflows'
-import { useWorkflow, WorkflowProvider } from './hooks/workflow'
+import { WorkflowProvider } from './hooks/workflow'
 
 const WorkflowTabBody: FC = () => {
-  const { isLoading } = useWorkflow()
-
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
-
   return (
     <Box>
       <Workflows />

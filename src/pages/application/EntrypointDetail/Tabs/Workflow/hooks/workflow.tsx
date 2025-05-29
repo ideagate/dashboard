@@ -1,6 +1,6 @@
 import { Edge as PbEdge, Step as PbStep, Workflow } from '@ideagate/model/core/endpoint/workflow'
 import { Box } from '@mui/material'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, UseQueryResult } from '@tanstack/react-query'
 import {
   OnConnectEnd,
   ReactFlowProps as ReactFlowPropsOriginal,
@@ -22,10 +22,10 @@ import { graphEdgesToWorkflowEdges, graphNodesToWorkflowSteps, workflowToGraph }
 type ReactFlowProps = ReactFlowPropsOriginal<Node, Edge>
 
 interface WorkflowContextType {
-  workflows: Workflow[]
   workflow: Workflow | null
   isLoading: boolean
   saveWorkflow: () => void
+  showStepInfo: (stepId: string) => void
 
   nodes: Node[]
   edges: Edge[]
@@ -34,16 +34,16 @@ interface WorkflowContextType {
   onNodesChange: ReactFlowProps['onNodesChange']
   onEdgesChange: ReactFlowProps['onEdgesChange']
   onConnectEnd: ReactFlowProps['onConnectEnd']
+  setNodeStepById: (id: string, stepFunc: (prevStep: PbStep) => PbStep) => void
 
   currentVersion: bigint
-  setCurrentVersion: (version: bigint) => void
 }
 
 const WorkflowContext = createContext<WorkflowContextType>({
-  workflows: [],
   workflow: null,
   isLoading: true,
   saveWorkflow: () => {},
+  showStepInfo: () => {},
   nodes: [],
   edges: [],
   onDrop: () => {},
@@ -51,49 +51,24 @@ const WorkflowContext = createContext<WorkflowContextType>({
   onNodesChange: () => {},
   onEdgesChange: () => {},
   onConnectEnd: () => {},
+  setNodeStepById: () => {},
   currentVersion: 0n,
-  setCurrentVersion: () => {},
 })
 
 const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
-  const { project_id, app_id, entrypoint_id } = useParams()
-  const [searchParams, setSearchParams] = useSearchParams()
+  const { project_id: projectId, app_id: applicationId, entrypoint_id: entrypointId } = useParams()
+  if (!projectId || !applicationId || !entrypointId) {
+    throw new Error('Project ID, Application ID, and Entrypoint ID are required to fetch workflows')
+  }
+
+  const [, setSearchParams] = useSearchParams()
+
+  // React flow state
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([])
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
 
   // Fetch workflow data
-  const { data, isLoading, refetch } = useQuery<{ workflows: Workflow[]; workflow: Workflow }>({
-    queryKey: ['workflows', project_id, app_id, entrypoint_id],
-    queryFn: async () => {
-      const respWorkflows = await getWorkflows({
-        projectId: project_id,
-        applicationId: app_id,
-        entrypointId: entrypoint_id,
-      })
-
-      if (respWorkflows.workflows.length === 0) {
-        return { workflows: [], workflow: Workflow.create() }
-      }
-
-      const respWorkflow = await getWorkflows({
-        projectId: project_id,
-        applicationId: app_id,
-        entrypointId: entrypoint_id,
-        version: getCurrentVersion(),
-      })
-
-      const { nodes, edges } = workflowToGraph(respWorkflow.workflows[0])
-      setNodes(nodes)
-      setEdges(edges)
-
-      return {
-        workflows: respWorkflows.workflows,
-        workflow: respWorkflow?.workflows[0] || null,
-      }
-    },
-    initialData: {
-      workflows: [],
-      workflow: Workflow.create(),
-    },
-  })
+  const { data, isLoading } = useQueryWorkflow({ projectId, applicationId, entrypointId, setNodes, setEdges })
 
   // Mutation function to save workflow
   const rmWorkflow = useMutation({
@@ -101,11 +76,6 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
       updateWorkflow({ workflow })
     },
   })
-
-  // React flow state
-  const { nodes: initialNodes, edges: initialEdges } = workflowToGraph(data.workflow)
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
   const { screenToFlowPosition } = useReactFlow()
 
@@ -181,8 +151,31 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
     [screenToFlowPosition, setNodes]
   )
 
+  const setNodeStepById: WorkflowContextType['setNodeStepById'] = (id, stepFunc) => {
+    setNodes((nodes) =>
+      nodes.map((node) => {
+        if (node.id !== id) {
+          return node
+        }
+
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            step: stepFunc(node.data.step),
+          },
+        }
+      })
+    )
+  }
+
   // Save workflow
   const saveWorkflow = async () => {
+    if (!data?.workflow) {
+      console.error('No workflow to save')
+      return
+    }
+
     const newWorkflow: Workflow = {
       ...data.workflow,
       steps: graphNodesToWorkflowSteps(nodes),
@@ -191,25 +184,31 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
     await rmWorkflow.mutateAsync(newWorkflow)
   }
 
-  // Current version
-  const getCurrentVersion = () => {
-    if (!searchParams.has('version')) {
-      return BigInt(data.workflows[0]?.version || 0)
-    }
-    return BigInt(searchParams.get('version') || 0)
+  const showStepInfo = (stepId: string) => {
+    setSearchParams(
+      (prev) => {
+        prev.set('step_id', stepId)
+        return prev
+      },
+      { replace: true }
+    )
   }
-  const setCurrentVersion = (version: bigint) => {
-    setSearchParams((prev) => ({ ...prev, version: version.toString() }), { replace: true })
-    refetch()
+
+  if (isLoading) {
+    return <Box>Loading Workflow ...</Box>
+  }
+
+  if (data?.workflow == null) {
+    return <Box>No workflow found</Box>
   }
 
   return (
     <WorkflowContext.Provider
       value={{
-        workflows: data.workflows,
         workflow: data.workflow,
         isLoading,
         saveWorkflow,
+        showStepInfo,
         nodes,
         edges,
         onDrop,
@@ -217,13 +216,71 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         onNodesChange,
         onEdgesChange,
         onConnectEnd,
-        currentVersion: getCurrentVersion(),
-        setCurrentVersion: setCurrentVersion,
+        setNodeStepById,
+        currentVersion: data.version,
       }}
     >
-      {!isLoading ? props.children : <Box>Loading Workflow ...</Box>}
+      {props.children}
     </WorkflowContext.Provider>
   )
+}
+
+const useQueryWorkflow = (arg: {
+  projectId: string
+  applicationId: string
+  entrypointId: string
+  setNodes: ReturnType<typeof useNodesState<Node>>[1]
+  setEdges: ReturnType<typeof useEdgesState<Edge>>[1]
+}): UseQueryResult<{
+  workflow: Workflow | null
+  version: bigint
+}> => {
+  const { projectId, applicationId, entrypointId, setNodes, setEdges } = arg
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  return useQuery({
+    queryKey: ['workflows', projectId, applicationId, entrypointId],
+    queryFn: async () => {
+      // Determine the curent version, using latest version if not specified
+      let currentVersion = 0n
+      if (searchParams.has('version')) {
+        currentVersion = BigInt(searchParams.get('version') || 0)
+      } else {
+        // If no version is specified, fetch the latest version
+        const resp = await getWorkflows({ projectId, applicationId, entrypointId })
+        currentVersion = resp?.workflows[0]?.version || 0n
+      }
+      setSearchParams(
+        (prev) => {
+          prev.set('version', currentVersion.toString())
+          return prev
+        },
+        { replace: true }
+      )
+
+      // Fetch the specific workflow for the current version
+      const respWorkflow = await getWorkflows({
+        projectId,
+        applicationId,
+        entrypointId,
+        version: currentVersion,
+      })
+
+      const workflow = respWorkflow?.workflows[0]
+      currentVersion = workflow.version
+
+      // Set workflow to graph
+      const { nodes, edges } = workflowToGraph(workflow)
+      setNodes(nodes)
+      setEdges(edges)
+
+      return {
+        workflow: workflow || null,
+        version: currentVersion,
+      }
+    },
+  })
 }
 
 export const WorkflowProvider: FC<{ children: React.ReactNode }> = ({ children }) => (
