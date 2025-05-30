@@ -20,7 +20,7 @@ const NodeStart: FC<NodeProps> = ({ id }) => {
         <IconPlayerPlay />
       </div>
       <Handle type="source" position={Position.Right} />
-      <div className="absolute w-full text-center font-bold">Start</div>
+      <div className="absolute w-full text-center font-bold text-[10px]">Start</div>
     </Box>
   )
 }

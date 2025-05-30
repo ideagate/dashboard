@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 
 import { useWorkflow } from '../../hooks/workflow'
 import NewStep from './NewStep'
+import StepDetailMysql from './StepDetailMysql'
 import StepDetailSleep from './StepDetailSleep'
 
 const StepDetail: FC = () => {
@@ -21,6 +22,8 @@ const StepDetail: FC = () => {
   switch (step.type) {
     case StepType.SLEEP:
       return <StepDetailSleep key={step.id} step={step} />
+    case StepType.MYSQL:
+      return <StepDetailMysql key={step.id} step={step} />
   }
 
   return <NewStep />

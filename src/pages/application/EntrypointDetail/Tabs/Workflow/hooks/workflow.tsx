@@ -16,6 +16,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { getWorkflows, updateWorkflow } from '#/api/grpc/workflow'
 
 import { nodeTypes } from '../components/Pipeline/nodes'
+import { getNodeAttributesByTypeString } from '../models/nodeAttributes'
 import { Edge, Node } from '../types/graph'
 import { graphEdgesToWorkflowEdges, graphNodesToWorkflowSteps, workflowToGraph } from '../utils/graph'
 
@@ -131,6 +132,8 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         return
       }
 
+      const nodeAttribute = getNodeAttributesByTypeString(stepType)
+
       const { clientX, clientY } = event
       const newNode: Node = {
         id: newNodeId,
@@ -142,8 +145,8 @@ const WorkflowProviderBody: FC<{ children: React.ReactNode }> = (props) => {
         data: {
           step: PbStep.create({
             id: newNodeId,
-            name: 'Sleep',
-            type: Number(stepType),
+            name: nodeAttribute.name,
+            type: nodeAttribute.type,
           }),
         },
         origin: [0.5, 0.5],

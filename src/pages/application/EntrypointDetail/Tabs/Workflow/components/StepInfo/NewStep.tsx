@@ -1,7 +1,8 @@
 import { StepType } from '@ideagate/model/core/endpoint/workflow'
 import { Box, Typography } from '@mui/material'
-import { IconDatabase, IconFlag, IconPlayerPlay, IconZzz } from '@tabler/icons-react'
-import { DragEventHandler, FC, ReactNode } from 'react'
+import { DragEventHandler, FC } from 'react'
+
+import { getNodeAttributesByType } from '../../models/nodeAttributes'
 
 const NewStep: FC = () => {
   return (
@@ -18,36 +19,13 @@ const NewStep: FC = () => {
   )
 }
 
-const nodeAttributes: Record<number, { name: string; icon: ReactNode; color: string }> = {
-  [StepType.START]: {
-    name: 'Start',
-    icon: <IconPlayerPlay />,
-    color: '#474e93',
-  },
-  [StepType.END]: {
-    name: 'End',
-    icon: <IconFlag />,
-    color: '#474e93',
-  },
-  [StepType.MYSQL]: {
-    name: 'MySQL',
-    icon: <IconDatabase />,
-    color: '#7e5cad',
-  },
-  [StepType.SLEEP]: {
-    name: 'Sleep',
-    icon: <IconZzz />,
-    color: '#7e5cad',
-  },
-}
-
 const Node: FC<{ stepType: StepType }> = ({ stepType }) => {
   const onDragStart: DragEventHandler<HTMLDivElement> = (event) => {
     event.dataTransfer.setData('text/plain', stepType.toString())
     event.dataTransfer.effectAllowed = 'move'
   }
 
-  const nodeAttribute = nodeAttributes[stepType]
+  const nodeAttribute = getNodeAttributesByType(stepType)
 
   return (
     <Box

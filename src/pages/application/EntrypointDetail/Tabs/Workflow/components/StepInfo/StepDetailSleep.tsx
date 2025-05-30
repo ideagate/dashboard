@@ -17,9 +17,11 @@ const StepDetailSleep: FC<{ step: Step }> = ({ step }) => {
   return (
     <Box>
       <Stack spacing={2}>
-        <Box>
-          <Typography>Type: Sleep</Typography>
-          <Typography>ID: {step.id}</Typography>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="h4">Type: MySQL</Typography>
+            <Typography variant="caption">ID: {step.id}</Typography>
+          </Box>
           <IconButton color="error" onClick={handleClose}>
             <IconX />
           </IconButton>

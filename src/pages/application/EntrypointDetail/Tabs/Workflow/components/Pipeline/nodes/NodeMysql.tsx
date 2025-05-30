@@ -1,12 +1,12 @@
 import { Box } from '@mui/material'
-import { IconZzz } from '@tabler/icons-react'
+import { IconDatabase } from '@tabler/icons-react'
 import { Handle, NodeProps, Position } from '@xyflow/react'
 import { FC } from 'react'
 
 import { useWorkflow } from '../../../hooks/workflow'
 import { Node } from '../../../types/graph'
 
-const NodeSleep: FC<NodeProps<Node>> = ({ id, data }) => {
+const NodeMysql: FC<NodeProps<Node>> = ({ id, data }) => {
   const { setStepInfoId: showStepInfo, stepInfoId } = useWorkflow()
 
   const isNodeUnfocused = stepInfoId != null && stepInfoId !== id
@@ -19,7 +19,7 @@ const NodeSleep: FC<NodeProps<Node>> = ({ id, data }) => {
         style={{ color: 'white' }}
         onClick={() => showStepInfo(id)}
       >
-        <IconZzz />
+        <IconDatabase />
       </div>
       <Handle type="source" position={Position.Right} />
       <div className="absolute w-full text-center font-bold text-[10px]">{data.step.name}</div>
@@ -27,4 +27,4 @@ const NodeSleep: FC<NodeProps<Node>> = ({ id, data }) => {
   )
 }
 
-export default NodeSleep
+export default NodeMysql

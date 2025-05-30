@@ -20,7 +20,7 @@ const NodeEnd: FC<NodeProps> = ({ id }) => {
       >
         <IconFlag />
       </div>
-      <div className="absolute w-full text-center font-bold">Finish</div>
+      <div className="absolute w-full text-center font-bold text-[10px]">Finish</div>
     </Box>
   )
 }
